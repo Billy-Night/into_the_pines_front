@@ -1,0 +1,118 @@
+---
+interface Photo {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+}
+
+interface Props {
+  id: string;
+  title?: string;
+  photos: Photo[];
+}
+
+const { id, title = "A different perspective", photos } = Astro.props;
+---
+
+<section class="gallery" aria-labelledby={`${id}-title`} id={id}>
+  <div class="gallery__container">
+    <div class="section__heading">
+      <p class="eyebrow">02 / Aerial photography</p>
+      <h2 id="projects-title">View from the sky</h2>
+      <p class="section__intro">
+        A few shots from the air, taken with a drone. A different perspective on
+        the world around us.
+      </p>
+    </div>
+
+    <div class="gallery__masonry">
+      {
+        photos.map((photo) => (
+          <figure class="gallery__item">
+            <img
+              class="gallery__image"
+              src={photo.src}
+              alt={photo.alt}
+              width={photo.width}
+              height={photo.height}
+              loading="lazy"
+              decoding="async"
+            />
+
+            {photo.caption && (
+              <figcaption class="gallery__caption">{photo.caption}</figcaption>
+            )}
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery {
+    --gallery-gap: var(--space-5);
+    --gallery-radius: var(--radius-small, 0.25rem);
+
+    padding-block: var(--space-section);
+    background: var(--color-bg, #101b20);
+    color: var(--color-text, #f6f5ef);
+  }
+
+  .gallery__container {
+    max-width: min(
+      calc(100% - var(--container-gutter) * 2),
+      var(--container-width)
+    );
+    margin-inline: auto;
+    /* padding-inline: var(--container-gutter, 1.5rem); */
+  }
+
+  .gallery__title {
+    margin: 0 0 var(--space-7, 3rem);
+    font-size: var(--font-size-h2, clamp(2rem, 4vw, 3.5rem));
+    line-height: var(--line-height-heading, 1.08);
+    letter-spacing: var(--tracking-heading, -0.045em);
+  }
+
+  .gallery__masonry {
+    column-count: 1;
+    column-gap: var(--gallery-gap);
+  }
+
+  .gallery__item {
+    /* Keep each photo and its caption in the same column. */
+    break-inside: avoid;
+    margin: 0 0 var(--gallery-gap);
+    overflow: hidden;
+    border-radius: var(--gallery-radius);
+    background: var(--color-surface, #16262c);
+  }
+
+  .gallery__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .gallery__caption {
+    padding: var(--space-4, 1rem);
+    color: var(--color-muted, #b4c3c7);
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-body, 1.65);
+  }
+
+  @media (min-width: 40rem) {
+    .gallery__masonry {
+      column-count: 2;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .gallery__masonry {
+      column-count: 2;
+    }
+  }
+</style>

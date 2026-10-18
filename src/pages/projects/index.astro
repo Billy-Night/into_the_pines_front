@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import type { SanityDocument } from "@sanity/client";
+import { sanityClient } from "../../lib/sanity.js";
+const PROJECTS_QUERY = `*[
+  _type == "project"
+  && defined(slug.current)
+]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`;
+const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
+---
+
+<BaseLayout content={{ title: "Projects" }}>
+  <main class="container mx-auto min-h-screen max-w-3xl p-8">
+    <h1 class="text-4xl font-bold mb-8">Projects</h1>
+    <ul class="flex flex-col gap-y-4">
+      {
+        projects.map((project) => (
+          <li class="hover:underline">
+            <a href={`/projects/${project.slug.current}`}>
+              <h2 class="text-xl font-semibold">{project.title}</h2>
+              <p>{new Date(project.publishedAt).toLocaleDateString()}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</BaseLayout>

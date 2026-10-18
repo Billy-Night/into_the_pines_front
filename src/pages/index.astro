@@ -1,28 +1,184 @@
 ---
-import '../styles/global.css';
-// Component Imports
-import Button from '../components/Button.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PhotoGallery from "../components/PhotoGallery.astro";
+import { galleryPhotos } from "../data/photoGallery.js";
+import { PortableText, toPlainText } from "@portabletext/astro";
+import { company, services } from "../data/site.js";
+const year = new Date().getFullYear();
+import type { SanityDocument } from "@sanity/client";
+import { sanityClient } from "../lib/sanity.js";
+const PROJECTS_QUERY = `*[
+  _type == "project"
+  && defined(slug.current)
+]|order(publishedAt desc)[0...12]{_id, title, type, status, description, "image": image.asset->url, slug, publishedAt}`;
+const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
 
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+// console.log("projects", projects);
+// console.log("img", projects[0].image);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro + TailwindCSS</title>
-	</head>
-
-	<body>
-		<div class="grid place-items-center h-screen content-center">
-			<Button>Tailwind Button in Astro!</Button>
-			<a href="/markdown-page" class="p-4 underline">
-				Markdown is also supported...
-			</a>
-		</div>
-	</body>
-</html>
+<BaseLayout>
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="brand" href="#" aria-label={`${company.name} home`}>
+        <span class="brand__mark" aria-hidden="true">↗</span>{company.name}
+      </a>
+      <nav aria-label="Main navigation">
+        <ul class="site-nav">
+          <li><a class="site-nav__link" href="#services">Services</a></li>
+          <li><a class="site-nav__link" href="#projects">Projects</a></li>
+          <li>
+            <a class="site-nav__link site-nav__link--accent" href="#contact"
+              >Let’s talk <span aria-hidden="true">↗</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__landscape" aria-hidden="true"></div>
+      <div class="container hero__content">
+        <p class="eyebrow">Drone photography & videography</p>
+        <h1 class="hero__title" id="hero-title">
+          A different<br /><span class="hero__emphasis">perspective.</span>
+        </h1>
+        <p class="hero__description">
+          Extraordinary stories start with a new point of view. We create aerial
+          imagery that captures the world from a unique vantage point.
+        </p>
+        <div class="hero__actions">
+          <a class="button" href="#projects"
+            >Explore our projects <span aria-hidden="true">↗</span></a
+          >
+          <a class="button button--outline" href="#contact"
+            >Start a conversation</a
+          >
+        </div>
+        <div class="hero__caption">
+          <span
+            >Aerial photography / Aerial videography / Aerial storytelling</span
+          ><a href="#services"
+            >Discover what we do <span aria-hidden="true">↓</span></a
+          >
+        </div>
+      </div>
+    </section>
+    <section class="section" id="services" aria-labelledby="services-title">
+      <div class="container">
+        <div class="section__heading">
+          <p class="eyebrow">01 / What we do</p>
+          <h2 id="services-title">Your vision.<br />A new altitude.</h2>
+          <p class="section__intro">
+            From wide-open landscapes to the smallest architectural detail, we
+            find the angle that brings your story to life.
+          </p>
+        </div>
+        <div class="services">
+          {
+            services.map((service) => (
+              <article class="service-card">
+                <span class="service-card__number" aria-hidden="true">
+                  {service.number} /
+                </span>
+                <h3>{service.title}</h3>
+                <p class="service-card__description">{service.description}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    <PhotoGallery
+      id="photo-gallery"
+      title="A different perspective"
+      photos={galleryPhotos}
+    />
+    <section
+      class="section section--muted"
+      id="projects"
+      aria-labelledby="projects-title"
+    >
+      <div class="container">
+        <div class="section__heading">
+          <p class="eyebrow">03 / In the making</p>
+          <h2 id="projects-title">Current projects.</h2>
+          <p class="section__intro">
+            A glimpse of what’s taking shape in the studio.
+          </p>
+        </div>
+        <div class="projects">
+          {
+            projects.map((project) => (
+              <article class="project-card">
+                <div
+                  class={`project-card__visual project-card__visual--${project.theme}`}
+                  aria-hidden="true"
+                >
+                  {/* <span class="project-card__frame" /> */}
+                  <img
+                    class="project-image"
+                    src={project.image}
+                    alt={project.title}
+                  />
+                  <span class="project-card__visual-label">
+                    {project.status}
+                  </span>
+                </div>
+                <div class="project-card__meta">
+                  <>
+                    <span>{project.type}</span>
+                    <span class="project-card__status">{project.status}</span>
+                  </>
+                </div>
+                <h3>{project.title}</h3>
+                <p class="project-card__description">
+                  {toPlainText(project.description || [])}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+    <section
+      class="section contact"
+      id="contact"
+      aria-labelledby="contact-title"
+    >
+      <div class="container contact__inner">
+        <div>
+          <p class="eyebrow">04 / Let’s make something</p>
+          <h2 id="contact-title">Have a story<br />worth seeing?</h2>
+          <p class="contact__description">
+            Tell us about your idea, location, and timeline. We’ll take it from
+            there.
+          </p>
+        </div>
+        <div class="contact__action">
+          <a
+            class="button button--dark"
+            href={`mailto:${company.email}?subject=Let%E2%80%99s%20talk%20about%20a%20project`}
+            >Let’s talk about your project <span aria-hidden="true">↗</span></a
+          >
+          <a class="contact__email" href={`mailto:${company.email}`}
+            >{company.email}</a
+          >
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <a class="brand" href="#"
+        >{company.name}<span class="brand__mark" aria-hidden="true">↗</span></a
+      >
+      <p class="site-footer__copyright">
+        © {year}
+        {company.name}. All rights reserved.
+      </p>
+      <a class="site-footer__top" href="#">Back to top ↑</a>
+    </div>
+  </footer>
+</BaseLayout>

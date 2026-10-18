@@ -1,1 +1,381 @@
-@import "tailwindcss";
+/* BEM: block__element--modifier. Low-specificity classes; no ID selectors.
+   Order: reset/base → layout → components → responsive → preferences. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-body);
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1,
+h2,
+h3 {
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--tracking-heading);
+  font-weight: 600;
+}
+h2 {
+  font-size: var(--font-size-h2);
+}
+h3 {
+  font-size: var(--font-size-h3);
+}
+a {
+  color: inherit;
+  text-underline-offset: var(--space-1);
+}
+a:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+section {
+  scroll-margin-top: var(--space-6);
+}
+.container {
+  width: min(calc(100% - var(--container-gutter) * 2), var(--container-width));
+  margin-inline: auto;
+}
+.section {
+  padding-block: var(--space-section);
+}
+.section--muted {
+  background: var(--color-surface);
+}
+.section__heading {
+  display: grid;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+}
+.section__intro {
+  max-width: var(--measure-copy);
+  color: var(--color-muted);
+}
+.eyebrow {
+  font-size: var(--font-size-xs);
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+.skip-link {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  z-index: 10;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-accent);
+  color: var(--color-ink);
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+.site-header {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding-block: var(--space-5);
+  flex-wrap: wrap;
+}
+.brand {
+  display: inline-flex;
+  gap: var(--space-3);
+  align-items: center;
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+  text-decoration: none;
+}
+.brand__mark {
+  color: var(--color-accent);
+  font-size: var(--font-size-h3);
+}
+.site-nav {
+  display: flex;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-nav__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  gap: var(--space-2);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+}
+.site-nav__link:hover {
+  text-decoration: underline;
+}
+.site-nav__link--accent {
+  color: var(--color-accent);
+}
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--color-landscape-sky);
+}
+/* Self-contained abstract landscape. Replace with your own aerial image/video. */
+.hero__landscape {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, var(--color-bg), transparent),
+    linear-gradient(
+      155deg,
+      transparent 45%,
+      var(--color-landscape-far) 45.1% 59%,
+      var(--color-landscape-near) 59.1% 76%,
+      var(--color-landscape-deep) 76.1%
+    );
+}
+.hero__content {
+  padding-top: var(--space-section);
+}
+.hero__title {
+  margin-block: var(--space-6);
+  font-size: var(--font-size-hero);
+}
+.hero__emphasis {
+  color: var(--color-accent);
+}
+.hero__description {
+  max-width: var(--measure-copy);
+  color: var(--color-muted);
+  font-size: var(--font-size-lg);
+}
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+.hero__caption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-section);
+  padding-block: var(--space-5);
+  border-top: var(--border-width) solid var(--color-border);
+  font-size: var(--font-size-sm);
+}
+.button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-5);
+  min-height: 48px;
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-small);
+  background: var(--color-accent);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-weight: 650;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+.button:hover {
+  background: var(--color-accent-hover);
+}
+.button--outline {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.button--outline:hover {
+  background: var(--color-surface);
+}
+.button--dark {
+  background: var(--color-ink);
+  color: var(--color-text);
+}
+.button--dark:hover {
+  background: var(--color-surface);
+}
+.services,
+.projects {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+}
+
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.service-card {
+  padding-top: var(--space-5);
+  border-top: var(--border-width) solid var(--color-border);
+}
+.service-card__number {
+  display: block;
+  margin-bottom: var(--space-7);
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+}
+.service-card__description,
+.project-card__description {
+  margin-top: var(--space-4);
+  color: var(--color-muted);
+}
+.project-card__visual {
+  display: grid;
+  position: relative;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-small);
+  background-color: var(--color-landscape-sky);
+}
+.project-card__visual--coast {
+  background-image: linear-gradient(
+    125deg,
+    transparent 45%,
+    var(--color-landscape-far) 45.2% 62%,
+    var(--color-landscape-deep) 62.2%
+  );
+}
+.project-card__visual--city {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 15%,
+      var(--color-landscape-deep) 15% 20%
+    ),
+    linear-gradient(25deg, var(--color-landscape-far) 50%, transparent 50.2%);
+}
+.project-card__visual--mountain {
+  background-image:
+    conic-gradient(
+      from 140deg at 70% 20%,
+      var(--color-landscape-far) 0deg 80deg,
+      transparent 80deg
+    ),
+    conic-gradient(
+      from 140deg at 30% 40%,
+      var(--color-landscape-deep) 0deg 80deg,
+      transparent 80deg
+    );
+}
+.project-card__frame {
+  width: 25%;
+  aspect-ratio: 1;
+  border: var(--border-width) solid var(--color-muted);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+.project-card__visual-label {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+}
+.project-card__meta {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-block: var(--space-5) var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-muted);
+}
+.project-card__status {
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+.contact {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  --color-focus: var(--color-ink);
+}
+.contact__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-7);
+}
+.contact .eyebrow {
+  margin-bottom: var(--space-5);
+}
+.contact__description {
+  max-width: var(--measure-copy);
+  margin-top: var(--space-5);
+}
+.contact__action {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-5);
+}
+.contact__email {
+  overflow-wrap: anywhere;
+}
+.site-footer__inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding-block: var(--space-7);
+}
+.site-footer__copyright,
+.site-footer__top {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+/* Breakpoints are literal because CSS custom properties cannot be used in media queries. */
+@media (max-width: 48rem) {
+  .services,
+  .projects {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+  .contact__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .service-card__number {
+    margin-bottom: var(--space-5);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .button {
+    transition: none;
+  }
+}
