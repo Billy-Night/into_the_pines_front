@@ -1,0 +1,110 @@
+---
+import { toPlainText } from "astro-portabletext";
+interface Project {
+  title: string;
+  status: string;
+  description: [];
+  image?: { src: string; alt: string; width: number; height: number };
+  videoUrl?: string;
+}
+interface Props {
+  projects: Project[];
+}
+const { projects } = Astro.props;
+
+console.log("projects", projects);
+---
+
+<div class="project-gallery">
+  {
+    projects.map((project, index) => (
+      <article class="project-gallery__item">
+        {project.image ? (
+          <img
+            class="project-gallery__image"
+            src={project.image.src}
+            alt={project.image.alt}
+            width={project.image.width}
+            height={project.image.height}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <div
+            class={`project-card__visual project-card__visual--${project.theme} project-gallery__placeholder`}
+            aria-hidden="true"
+          >
+            <span class="project-card__frame" />
+            <span class="project-card__visual-label">
+              Concept / {String(index + 1).padStart(2, "0")}
+            </span>
+          </div>
+        )}
+        <div class="project-gallery__body">
+          <div class="project-card__meta">
+            <>
+              <span class="project-card__status">{project.status}</span>
+            </>
+          </div>
+          <h3>{project.title}</h3>
+          <p class="project-card__description">
+            {toPlainText(project.description || [])}
+          </p>
+          {/* {project.videoUrl && (
+            <a class="project-gallery__link" href={project.videoUrl}>
+              Watch {project.title} <span aria-hidden="true">↗</span>
+            </a>
+          )} */}
+          <a
+            class="project-gallery__link"
+            href={`/projects/${project.slug.current}`}
+          >
+            View Project
+          </a>
+        </div>
+      </article>
+    ))
+  }
+</div>
+<style>
+  .project-gallery {
+    columns: 2;
+    column-gap: var(--space-7);
+  }
+  .project-gallery__item {
+    break-inside: avoid;
+    margin-bottom: var(--space-7);
+    background: var(--color-surface);
+    border-radius: var(--radius-small);
+    overflow: hidden;
+  }
+  .project-gallery__image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .project-gallery__placeholder {
+    aspect-ratio: 4 / 3;
+    border-radius: 0;
+  }
+  .project-gallery__item:nth-child(3n + 2) .project-gallery__placeholder {
+    aspect-ratio: 4 / 5;
+  }
+  .project-gallery__body {
+    padding: var(--space-5);
+  }
+  .project-gallery__body .project-card__meta {
+    margin-top: 0;
+  }
+  .project-gallery__link {
+    display: inline-block;
+    margin-top: var(--space-5);
+    padding-block: var(--space-2);
+    color: var(--color-accent);
+  }
+  @media (max-width: 48rem) {
+    .project-gallery {
+      columns: 1;
+    }
+  }
+</style>

@@ -1,10 +1,12 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import PhotoGallery from "../components/PhotoGallery.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
 import { galleryPhotos } from "../data/photoGallery.js";
-import { PortableText, toPlainText } from "@portabletext/astro";
 import { company, services } from "../data/site.js";
-const year = new Date().getFullYear();
+
 import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "../lib/sanity.js";
 const PROJECTS_QUERY = `*[
@@ -15,24 +17,7 @@ const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
 ---
 
 <BaseLayout>
-  <header class="site-header">
-    <div class="container site-header__inner">
-      <a class="brand" href="#" aria-label={`${company.name} home`}>
-        <span class="brand__mark" aria-hidden="true">↗</span>{company.name}
-      </a>
-      <nav aria-label="Main navigation">
-        <ul class="site-nav">
-          <li><a class="site-nav__link" href="#services">Services</a></li>
-          <li><a class="site-nav__link" href="#projects">Projects</a></li>
-          <li>
-            <a class="site-nav__link site-nav__link--accent" href="#contact"
-              >Let’s talk <span aria-hidden="true">↗</span></a
-            >
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <Navbar />
   <main id="main">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero__landscape" aria-hidden="true"></div>
@@ -106,36 +91,7 @@ const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
           </p>
         </div>
         <div class="projects">
-          {
-            projects.map((project) => (
-              <article class="project-card">
-                <div
-                  class={`project-card__visual project-card__visual--${project.theme}`}
-                  aria-hidden="true"
-                >
-                  {/* <span class="project-card__frame" /> */}
-                  <img
-                    class="project-image"
-                    src={project.image}
-                    alt={project.title}
-                  />
-                  <span class="project-card__visual-label">
-                    {project.status}
-                  </span>
-                </div>
-                <div class="project-card__meta">
-                  <>
-                    <span>{project.type}</span>
-                    <span class="project-card__status">{project.status}</span>
-                  </>
-                </div>
-                <h3>{project.title}</h3>
-                <p class="project-card__description">
-                  {toPlainText(project.description || [])}
-                </p>
-              </article>
-            ))
-          }
+          {projects.map((project) => <ProjectCard project={project} />)}
         </div>
       </div>
     </section>
@@ -166,16 +122,5 @@ const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
       </div>
     </section>
   </main>
-  <footer class="site-footer">
-    <div class="container site-footer__inner">
-      <a class="brand" href="#"
-        >{company.name}<span class="brand__mark" aria-hidden="true">↗</span></a
-      >
-      <p class="site-footer__copyright">
-        © {year}
-        {company.name}. All rights reserved.
-      </p>
-      <a class="site-footer__top" href="#">Back to top ↑</a>
-    </div>
-  </footer>
+  <Footer />
 </BaseLayout>

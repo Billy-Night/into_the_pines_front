@@ -1,0 +1,37 @@
+---
+import { toPlainText } from "@portabletext/astro";
+const { project } = Astro.props;
+---
+
+<article class="project-card">
+  <div
+    class={`project-card__visual project-card__visual--${project.theme}`}
+    aria-hidden="true"
+  >
+    {/* <span class="project-card__frame" /> */}
+    <img class="project-image" src={project.image} alt={project.title} />
+    <span class="project-card__visual-label">
+      {project.status}
+    </span>
+  </div>
+  <div class="project-card__meta">
+    <>
+      <span>{project.type}</span>
+      <span class="project-card__status">{project.status}</span>
+    </>
+  </div>
+  <h3>{project.title}</h3>
+  <p class="project-card__description">
+    {toPlainText(project.description || [])}
+  </p>
+  <a href={`/projects/${project.slug.current}`}>View Project</a>
+  <!-- <button class="btn-project-crd">Click</button> -->
+</article>
+<!-- <script>
+  const handleClick = () => {
+    console.log("btn clicked");
+  };
+
+  const btn = document.querySelector(".btn-project-crd");
+  btn?.addEventListener("click", handleClick);
+</script> -->

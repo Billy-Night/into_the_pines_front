@@ -1,0 +1,22 @@
+---
+import { company } from "../data/site.js";
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label={`${company.name} home`}>
+      <span class="brand__mark" aria-hidden="true">↗</span>{company.name}
+    </a>
+    <nav aria-label="Main navigation">
+      <ul class="site-nav">
+        <li><a class="site-nav__link" href="/#services">Services</a></li>
+        <li><a class="site-nav__link" href="/projects">Projects</a></li>
+        <li>
+          <a class="site-nav__link site-nav__link--accent" href="#contact"
+            >Let’s talk <span aria-hidden="true">↗</span></a
+          >
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

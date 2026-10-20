@@ -1,28 +1,140 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Navbar from "../../components/Navbar.astro";
+import Footer from "../../components/Footer.astro";
+import ProjectGallery from "../../components/ProjectGallery.astro";
+import { company } from "../../data/site.js";
 import type { SanityDocument } from "@sanity/client";
 import { sanityClient } from "../../lib/sanity.js";
+
 const PROJECTS_QUERY = `*[
   _type == "project"
   && defined(slug.current)
-]|order(publishedAt desc)[0...12]{_id, title, slug, publishedAt}`;
+]|order(publishedAt desc)[0...12]{_id, title, type, status, description, "image": {
+    "src": image.asset->url,
+    "alt": coalesce(image.alt, title),
+    "width": image.asset->metadata.dimensions.width,
+    "height": image.asset->metadata.dimensions.height
+  }, slug, publishedAt}`;
 const projects = await sanityClient.fetch<SanityDocument[]>(PROJECTS_QUERY);
 ---
 
-<BaseLayout content={{ title: "Projects" }}>
-  <main class="container mx-auto min-h-screen max-w-3xl p-8">
-    <h1 class="text-4xl font-bold mb-8">Projects</h1>
-    <ul class="flex flex-col gap-y-4">
-      {
-        projects.map((project) => (
-          <li class="hover:underline">
-            <a href={`/projects/${project.slug.current}`}>
-              <h2 class="text-xl font-semibold">{project.title}</h2>
-              <p>{new Date(project.publishedAt).toLocaleDateString()}</p>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+<BaseLayout
+  title={`Projects — ${company.name}`}
+  description={`Explore aerial cinematography, FPV, and brand film projects from ${company.name}.`}
+>
+  <Navbar />
+  <main id="main">
+    <section class="portfolio-intro section" aria-labelledby="portfolio-title">
+      <div class="container">
+        <a class="portfolio-intro__back" href="/">← Back to home</a>
+        <p class="eyebrow">
+          Our projects / Photography · Videography · Storytelling
+        </p>
+        <h1 class="portfolio-intro__title" id="portfolio-title">
+          Stories from<br /><span>a different angle.</span>
+        </h1>
+        <p class="portfolio-intro__description">
+          Coastlines, considered spaces, and roads less travelled. Explore the
+          stories we’re bringing into focus.
+        </p>
+        <a class="button button--outline" href="#all-projects"
+          >Explore the collection <span aria-hidden="true">↓</span></a
+        >
+      </div>
+    </section>
+    <section
+      class="portfolio section"
+      id="all-projects"
+      aria-labelledby="collection-title"
+    >
+      <div class="container">
+        <div class="portfolio__heading">
+          <h2 id="collection-title">
+            All projects<span class="portfolio__count">
+              ({projects.length})</span
+            >
+          </h2>
+          <p class="portfolio__note">
+            Sample projects and concept artwork. Replace with your own films and
+            photography.
+          </p>
+        </div>
+        {
+          projects.length ? (
+            <ProjectGallery projects={projects} />
+          ) : (
+            <p>New stories are on the horizon. Check back soon.</p>
+          )
+        }
+      </div>
+    </section>
+    <section class="section contact" aria-labelledby="project-contact-title">
+      <div class="container contact__inner">
+        <div>
+          <p class="eyebrow">Your story could be next</p>
+          <h2 id="project-contact-title">Let’s find your<br />perspective.</h2>
+          <p class="contact__description">
+            Have a place, a brand, or an idea to share? Tell us what you have in
+            mind.
+          </p>
+        </div>
+        <div class="contact__action">
+          <a class="button button--dark" href={`mailto:${company.email}`}
+            >Start a project <span aria-hidden="true">↗</span></a
+          >
+          <a class="contact__email" href={`mailto:${company.email}`}
+            >{company.email}</a
+          >
+        </div>
+      </div>
+    </section>
   </main>
+  <Footer />
 </BaseLayout>
+<style>
+  .portfolio-intro {
+    background: linear-gradient(
+      140deg,
+      var(--color-bg),
+      var(--color-landscape-near)
+    );
+  }
+  .portfolio-intro__back {
+    display: inline-block;
+    margin-bottom: var(--space-7);
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+  .portfolio-intro__title {
+    font-size: var(--font-size-hero);
+    margin-block: var(--space-6);
+  }
+  .portfolio-intro__title span {
+    color: var(--color-accent);
+  }
+  .portfolio-intro__description {
+    max-width: var(--measure-copy);
+    color: var(--color-muted);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-6);
+  }
+  .portfolio__heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    margin-bottom: var(--space-7);
+  }
+  .portfolio__count {
+    color: var(--color-accent);
+    font-size: var(--font-size-lg);
+    white-space: nowrap;
+  }
+  .portfolio__note {
+    max-width: 40ch;
+    color: var(--color-muted);
+    font-size: var(--font-size-sm);
+  }
+</style>
